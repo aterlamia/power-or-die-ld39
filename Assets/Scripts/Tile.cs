@@ -3,6 +3,8 @@
   public int X { get; private set; }
   public int Y { get; private set; }
 
+  private bool hasBuilding = false;
+
   public bool HasCoal {
     get { return hasCoal; }
     set { hasCoal = value; }
@@ -11,6 +13,11 @@
   public int CoalAmount {
     get { return coalAmount; }
     set { coalAmount = value; }
+  }
+
+  public bool HasBuilding {
+    get { return hasBuilding; }
+    set { hasBuilding = value; }
   }
 
   private Building _building;

@@ -11,6 +11,7 @@ public class MouseHandler : MonoBehaviour {
   private Vector3 _lastMousePos;
 
   private GameObject _followTemplate;
+  private Building _followBuilding;
 
   // Use this for initialization
   void Start() {
@@ -46,14 +47,21 @@ public class MouseHandler : MonoBehaviour {
       if (obj == null) {
         return;
       }
+
+      SpriteRenderer renderer = _followTemplate.GetComponent<SpriteRenderer>();
+      if (IsValidBaseTile(obj)) {
+        renderer.color = Color.green;
+      } else {
+        renderer.color = Color.red;
+      }
+
       Vector3 pos = obj.transform.position;
-      pos.z = -6f;
+      pos.z = 0f;
       _followTemplate.transform.position = pos;
     }
 
     _lastMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    if (Input.GetMouseButtonDown(0)) {
-    } else if (Input.GetMouseButtonUp(0)) {
+    if (Input.GetMouseButtonDown(0)) { } else if (Input.GetMouseButtonUp(0)) {
       GameObject tile = MouseToTile();
 
       if (tile == null) {
@@ -101,9 +109,24 @@ public class MouseHandler : MonoBehaviour {
       return false;
     }
 
-    _mapCreator.FinalizeTemplate(_followTemplate, tile);
-    _followTemplate = null;
+    if (IsValidBaseTile(tile)) {
+      _mapCreator.FinalizeTemplate(_followTemplate, tile);
+      _followTemplate = null;
+    }
     return true;
+  }
+
+  private bool IsValidBaseTile(GameObject tileOnj) {
+    Tile tile = _mapCreator.GetTileForGameObject(tileOnj);
+
+    if (tile.HasBuilding) {
+      return false;
+    }
+    if (_followBuilding.Type == BuildType.Mine) {
+      return tile.HasCoal;
+    } else {
+      return !tile.HasCoal;
+    }
   }
 
   private bool handleMenuClicks() {
@@ -121,32 +144,66 @@ public class MouseHandler : MonoBehaviour {
       return false;
     }
 
+    if (MenuCollapse(hitInfo)) return true;
+
     Building building;
-    
+
+    ResourcesManager resourcesManager = _mapCreator.ResourceManager;
     // Move buildings creation to a factory when time.
     switch (hitInfo.collider.name) {
       case "btnPower":
-        building = new Building("Plant1", BuildType.PowerPlant, 0.05f, 0f, 200f, 0);
+        building = BuildingFactory.createBuilding(BuildType.PowerPlant, resourcesManager);
         _followTemplate = _mapCreator.getBuildingTemplate(building);
         break;
       case "btnMine":
-        building = new Building("Mine1", BuildType.Mine, 0f, 0.04f, 200f, 0);
+        building = BuildingFactory.createBuilding(BuildType.Mine, resourcesManager);
         _followTemplate = _mapCreator.getBuildingTemplate(building);
         break;
       case "btnStore":
-        building = new Building("Storage1", BuildType.Storage, 0f, 0.06f, 100f, 0);
+        building = BuildingFactory.createBuilding(BuildType.Storage, resourcesManager);
         _followTemplate = _mapCreator.getBuildingTemplate(building);
         break;
       case "btnShield":
-        building = new Building("Shield1", BuildType.ShieldGenerator, 0f, 0.15f, 100f, 0);
+      default:
+        building = BuildingFactory.createBuilding(BuildType.ShieldGenerator, resourcesManager);
         _followTemplate = _mapCreator.getBuildingTemplate(building);
         break;
     }
-    GameObject menu = hitInfo.collider.gameObject;
-    SpriteRenderer[] renderers = menu.GetComponentInChildren<Transform>().GetComponentsInChildren<SpriteRenderer>();
-    foreach (SpriteRenderer renderer in renderers) {
-      renderer.enabled = true;
-    }
+
+    _followBuilding = building;
     return true;
+  }
+
+  private static bool MenuCollapse(RaycastHit2D hitInfo) {
+    if (hitInfo.collider.name == "menuClosed") {
+      hitInfo.collider.name = "menuOpen";
+      GameObject menu = hitInfo.collider.gameObject;
+      SpriteRenderer[] renderers = menu.GetComponentInChildren<Transform>().GetComponentsInChildren<SpriteRenderer>();
+      foreach (SpriteRenderer spriteRenderer in renderers) {
+        spriteRenderer.enabled = true;
+      }
+      BoxCollider2D[] colliders = menu.GetComponentInChildren<Transform>().GetComponentsInChildren<BoxCollider2D>();
+      foreach (BoxCollider2D collider in colliders) {
+        collider.enabled = true;
+      }
+      return true;
+    }
+
+    if (hitInfo.collider.name == "menuOpen") {
+      hitInfo.collider.name = "menuClosed";
+      GameObject menu = hitInfo.collider.gameObject;
+      SpriteRenderer[] renderers = menu.gameObject.GetComponentsInChildren<SpriteRenderer>();
+      foreach (SpriteRenderer spriteRenderer in renderers) {
+        spriteRenderer.enabled = false;
+      }
+      BoxCollider2D[] colliders = menu.GetComponentInChildren<Transform>().GetComponentsInChildren<BoxCollider2D>();
+      foreach (BoxCollider2D collider in colliders) {
+        collider.enabled = false;
+      }
+      menu.GetComponent<SpriteRenderer>().enabled = true;
+      menu.GetComponent<BoxCollider2D>().enabled = true;
+      return true;
+    }
+    return false;
   }
 }

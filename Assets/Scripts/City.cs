@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class City {
   private HashSet<Building> _buildings;
@@ -23,13 +24,15 @@ public class City {
     PowerConsumption = 0;
     foreach(Building building in _buildings)
     {
-      PowerConsumption += building.PowerAdd;
+      Debug.Log("test22");
+      building.Update();
+      PowerConsumption += building.getPowerAdd();
       PowerConsumption -= building.PowerTake;
     }
   }
 
   public void addBuilding(Building building) {
-    PowerConsumption += building.PowerAdd;
+    PowerConsumption += building.getPowerAdd();
     PowerConsumption -= building.PowerTake;
     _buildings.Add(building);
   }

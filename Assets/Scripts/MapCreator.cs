@@ -15,8 +15,15 @@ public class MapCreator : MonoBehaviour {
   public GameObject TilePrefab;
   public GameObject ShieldPrefab;
   public GameObject CityPrefab;
+
+  //Debugging
   public bool showFog;
+
+  public bool showDialog;
+
+  // END DEBUGGING
   public Vector2[] CoalPatches;
+
   public string Seed;
 
   private Tile[,] _map;
@@ -37,6 +44,8 @@ public class MapCreator : MonoBehaviour {
   private Canvas _canvas;
   private EnergyManager _manager;
 
+  public ResourcesManager ResourceManager { get; private set; }
+
   // Use this for initialization
   void Start() {
     _sizeX = (float) Math.Sqrt(3f) / 2f * 2f;
@@ -47,11 +56,14 @@ public class MapCreator : MonoBehaviour {
     _gameObjectToTile = new Dictionary<GameObject, Tile>();
     _sprites = new Dictionary<BuildType, Sprite>();
 
-    _canvas = GameObject.FindObjectOfType<Canvas>();
-    _canvas.enabled = true;
-    
+    _canvas = FindObjectOfType<Canvas>();
+    if (showDialog) {
+      _canvas.enabled = true;
+    }
+
     _manager = gameObject.GetComponent<EnergyManager>();
-    
+    ResourceManager = new ResourcesManager();
+
     InitSprites();
     InitMap();
     DrawMap();
@@ -60,17 +72,17 @@ public class MapCreator : MonoBehaviour {
   private void InitSprites() {
     _sprites[BuildType.PowerPlant] = Resources.Load<Sprite>("Power");
     _sprites[BuildType.CityCenter] = Resources.Load<Sprite>("City");
-    _sprites[BuildType.Mine] = Resources.Load<Sprite>("Mine");  
+    _sprites[BuildType.Mine] = Resources.Load<Sprite>("Mine");
     _sprites[BuildType.Storage] = Resources.Load<Sprite>("Storage");
     _sprites[BuildType.ShieldGenerator] = Resources.Load<Sprite>("ShieldGen");
   }
 
   void Update() {
-
+    Debug.Log("test2");
     if (_canvas.enabled) {
       return;
     }
-    
+    Debug.Log("test3");
     City1.update();
     EnergyManager.PowerConsumption = City1.PowerConsumption;
     _manager.PowerLeft = _manager.PowerLeft + _manager.PowerConsumption;
@@ -95,6 +107,7 @@ public class MapCreator : MonoBehaviour {
     InitCity(StartPos);
 
     // broken mine
+    _map[21, 18].HasBuilding = true;
     _map[21, 18].BaseType = 7;
   }
 
@@ -164,8 +177,11 @@ public class MapCreator : MonoBehaviour {
     var buildingObj = Instantiate(TilePrefab, new Vector3(10, 10, -1), Quaternion.identity, transform);
     buildingObj.name = "Drag";
     buildingObj.layer = LayerMask.NameToLayer("DragTiles");
+    buildingObj.gameObject.layer = LayerMask.NameToLayer("DragTiles");
     var renderer = buildingObj.GetComponent<SpriteRenderer>();
     renderer.sprite = _sprites[building.Type];
+
+    renderer.sortingOrder = 2;
     _buildingToGameObjects[building] = buildingObj;
     _gameObjectToBuilding[buildingObj] = building;
     return buildingObj;
@@ -176,10 +192,17 @@ public class MapCreator : MonoBehaviour {
     City1.addBuilding(building);
     EnergyManager.removePower(building.PowerToBuild);
     tileObject.tag = "Untagged";
-    tileObject.layer = LayerMask.NameToLayer("BaseTiles");
+ 
+    tileObject.layer = LayerMask.NameToLayer("BuildingTiles");
+    tileObject.gameObject.layer = LayerMask.NameToLayer("BuildingTiles");
+    tileObject.GetComponent<SpriteRenderer>().color = Color.white;
+
     var parentTile = _gameObjectToTile[parentTileObject];
+    parentTile.HasBuilding = true;
     removeFogOfWar(parentTile.X, parentTile.Y, 1, false);
 
+    tileObject.name = "Placed " + parentTile.X + "-" + parentTile.Y;
+    
     if (building.Type == BuildType.ShieldGenerator) {
       addShield((int) parentTile.X, (int) parentTile.Y, 2);
     }
@@ -251,17 +274,39 @@ public class MapCreator : MonoBehaviour {
         _gameObjectToTile[tileObj] = _map[x, y];
 
         if (_shield[x, y] == 1) {
-          var shieldObj = Instantiate(ShieldPrefab, pos, Quaternion.identity, this.transform) as GameObject;
+          if (ShieldPrefab != null) Instantiate(ShieldPrefab, pos, Quaternion.identity, transform);
         }
 
+        // Ehhhhh .....
         if (_buildings[x, y] == 1) {
-          var buildingObj = Instantiate(CityPrefab, pos, Quaternion.identity, this.transform) as GameObject;
-          var building = new Building("CityHall", BuildType.CityCenter, 0f, 0.05f, 100f, 0f);
+          var buildingObj = Instantiate(CityPrefab, pos, Quaternion.identity, transform) as GameObject;
+          var building = BuildingFactory.createBuilding(BuildType.CityCenter, ResourceManager);
+          buildingObj.layer = LayerMask.NameToLayer("BuildingTiles");
           _buildingToGameObjects[building] = buildingObj;
           _gameObjectToBuilding[buildingObj] = building;
           City1.addBuilding(building);
+          _map[x, y].HasBuilding = true;
+          _map[x, y + 1].HasBuilding = true;
+          var powerObj =
+            Instantiate(CityPrefab, new Vector3(pos.x, pos.y + 1, pos.z), Quaternion.identity, transform) as GameObject;
+
+          var renderer = powerObj.GetComponent<SpriteRenderer>();
+          renderer.sprite = _sprites[BuildType.PowerPlant];
+          powerObj.layer = LayerMask.NameToLayer("BaseTiles");
+          var power = BuildingFactory.createBuilding(BuildType.PowerPlant, ResourceManager);
+          _buildingToGameObjects[power] = powerObj;
+          _gameObjectToBuilding[powerObj] = power;
+          City1.addBuilding(power);  
         }
       }
     }
+  }
+
+  public GameObject GetGameObjectForTile(Tile tile) {
+    return _tileToGameObjects[tile];
+  }
+
+  public Tile GetTileForGameObject(GameObject tile) {
+    return _gameObjectToTile[tile];
   }
 }
