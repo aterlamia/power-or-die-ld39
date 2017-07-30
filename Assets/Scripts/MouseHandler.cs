@@ -19,22 +19,18 @@ public class MouseHandler : MonoBehaviour {
 
   // Update is called once per frame
   void Update() {
-    
-    if( Input.GetKeyDown(KeyCode.Escape) ) {
-
+    if (Input.GetKeyDown(KeyCode.Escape)) {
       if (_followTemplate != null) {
         _mapCreator.CancelTemplate(_followTemplate);
         Destroy(_followTemplate);
       }
       _followTemplate = null;
     }
-    
+
     if (Input.GetMouseButtonDown(2)) {
-      Debug.Log("MIddle MOUSE DOWN");  
       _isDragging = true;
     }
     if (Input.GetMouseButtonUp(2)) {
-      Debug.Log("MIddle MOUSE Up");
       _isDragging = false;
     }
 
@@ -57,7 +53,6 @@ public class MouseHandler : MonoBehaviour {
 
     _lastMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     if (Input.GetMouseButtonDown(0)) {
-      Debug.Log("MOUSE DOWN");
     } else if (Input.GetMouseButtonUp(0)) {
       GameObject tile = MouseToTile();
 
@@ -76,7 +71,6 @@ public class MouseHandler : MonoBehaviour {
     }
     if (HandleTileClicks()) return null;
 
-    Debug.Log("Found nothing.");
     return null;
   }
 
@@ -92,31 +86,23 @@ public class MouseHandler : MonoBehaviour {
     );
     if (hitInfo.collider != null) {
       // Something got hit
-      Debug.Log(hitInfo.collider.name);
-
       // The collider is a child of the "correct" game object that we want.
       GameObject tile = hitInfo.collider.gameObject;
       return tile;
     }
     return null;
   }
-  
+
   private bool HandleTileClicks() {
-    
     GameObject tile = getClickedTileObj();
-   
+
     // No tile then no click bail out.
-    if (tile == null) {
+    if (tile == null || _followTemplate == null || tile.CompareTag("fog")) {
       return false;
     }
-    Debug.Log(tile.name);
 
-    // We gota  clicj and we are in build mode so create final building.
-    if (_followTemplate != null) {
-      _mapCreator.FinalizeTemplate(tile);
-      _followTemplate = null;
-    }
-    
+    _mapCreator.FinalizeTemplate(_followTemplate, tile);
+    _followTemplate = null;
     return true;
   }
 
@@ -135,24 +121,32 @@ public class MouseHandler : MonoBehaviour {
       return false;
     }
 
-    Debug.Log("Menu nothing.");
-    Debug.Log(hitInfo.collider.name);
-
     Building building;
-    if (hitInfo.collider.name == "btnPower") {
-      Debug.Log("Menu Power.");
-      building = new Building("Plant1", BuildType.PowerPlant, 0.05f, 0f, 200f, 0);
-      _followTemplate = _mapCreator.getBuildingTemplate(building);
-    } else if (hitInfo.collider.name == "btnMine") {
-      building = new Building("Mine1", BuildType.Mine, 0f, 0.04f, 200f, 0);
-      Debug.Log("Menu Mine.");
-      _followTemplate = _mapCreator.getBuildingTemplate(building);
+    
+    // Move buildings creation to a factory when time.
+    switch (hitInfo.collider.name) {
+      case "btnPower":
+        building = new Building("Plant1", BuildType.PowerPlant, 0.05f, 0f, 200f, 0);
+        _followTemplate = _mapCreator.getBuildingTemplate(building);
+        break;
+      case "btnMine":
+        building = new Building("Mine1", BuildType.Mine, 0f, 0.04f, 200f, 0);
+        _followTemplate = _mapCreator.getBuildingTemplate(building);
+        break;
+      case "btnStore":
+        building = new Building("Storage1", BuildType.Storage, 0f, 0.06f, 100f, 0);
+        _followTemplate = _mapCreator.getBuildingTemplate(building);
+        break;
+      case "btnShield":
+        building = new Building("Shield1", BuildType.ShieldGenerator, 0f, 0.15f, 100f, 0);
+        _followTemplate = _mapCreator.getBuildingTemplate(building);
+        break;
     }
-    GameObject menu = hitInfo.collider.gameObject;  
+    GameObject menu = hitInfo.collider.gameObject;
     SpriteRenderer[] renderers = menu.GetComponentInChildren<Transform>().GetComponentsInChildren<SpriteRenderer>();
     foreach (SpriteRenderer renderer in renderers) {
       renderer.enabled = true;
     }
     return true;
   }
-}  
+}
