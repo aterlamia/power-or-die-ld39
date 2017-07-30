@@ -11,12 +11,15 @@ public class Gui : MonoBehaviour {
   private GUIStyle _guiStyleNegative;
   private GUIStyle _guiStylePositive;
 
+  private City _city;
   // Use this for initialization
   void Start() {
     _manager = gameObject.GetComponent<EnergyManager>();
     _resourcesManager = gameObject.GetComponent<MapCreator>().ResourceManager;
     _guiStyleNegative = new GUIStyle {normal = {textColor = Color.red}};
     _guiStylePositive = new GUIStyle {normal = {textColor = Color.green}};
+
+    _city = GameObject.Find("Scene").GetComponent<MapCreator>().City1;
   }
 
   // Update is called once per frame`
@@ -35,12 +38,17 @@ public class Gui : MonoBehaviour {
         _guiStyleNegative);
     }
 
-    if (_resourcesManager.Coal <= 0) {
-      GUI.Label(new Rect(10, 50, TextWidth, 22), "Coal :" + (Round(_resourcesManager.Coal,2)).ToString(),
-        _guiStyleNegative);
-    } else {
-      GUI.Label(new Rect(10, 50, TextWidth, 22), "Coal :" + (Round(_resourcesManager.Coal,2)).ToString());
+    
+    if (_resourcesManager != null) {
+      if (_resourcesManager.Coal <= 0) {
+        GUI.Label(new Rect(10, 50, TextWidth, 22), "Coal :" + (Round(_resourcesManager.Coal, 2)).ToString(),
+          _guiStyleNegative);
+      } else {
+        GUI.Label(new Rect(10, 50, TextWidth, 22), "Coal :" + (Round(_resourcesManager.Coal, 2)).ToString());
+      }
     }
+    
+    GUI.Label(new Rect(10, 70, TextWidth, 22), "Colonists :" + (_city.getResidents()).ToString());
   }
   
   public float Round(float value, int digits)
@@ -48,4 +56,6 @@ public class Gui : MonoBehaviour {
     float mult = Mathf.Pow(10.0f, (float)digits);
     return Mathf.Round(value * mult) / mult;
   }
+  
+  
 }

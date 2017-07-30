@@ -15,6 +15,7 @@ public class MapCreator : MonoBehaviour {
   public GameObject TilePrefab;
   public GameObject ShieldPrefab;
   public GameObject CityPrefab;
+  public Canvas Dialog;
 
   //Debugging
   public bool showFog;
@@ -41,7 +42,6 @@ public class MapCreator : MonoBehaviour {
   private Dictionary<Tile, GameObject> _tileToGameObjects;
   private Dictionary<GameObject, Tile> _gameObjectToTile;
 
-  private Canvas _canvas;
   private EnergyManager _manager;
 
   public ResourcesManager ResourceManager { get; private set; }
@@ -56,9 +56,8 @@ public class MapCreator : MonoBehaviour {
     _gameObjectToTile = new Dictionary<GameObject, Tile>();
     _sprites = new Dictionary<BuildType, Sprite>();
 
-    _canvas = FindObjectOfType<Canvas>();
     if (showDialog) {
-      _canvas.enabled = true;
+      Dialog.enabled = true;
     }
 
     _manager = gameObject.GetComponent<EnergyManager>();
@@ -75,14 +74,13 @@ public class MapCreator : MonoBehaviour {
     _sprites[BuildType.Mine] = Resources.Load<Sprite>("Mine");
     _sprites[BuildType.Storage] = Resources.Load<Sprite>("Storage");
     _sprites[BuildType.ShieldGenerator] = Resources.Load<Sprite>("ShieldGen");
+    _sprites[BuildType.House] = Resources.Load<Sprite>("House");
   }
 
   void Update() {
-    Debug.Log("test2");
-    if (_canvas.enabled) {
+    if (Dialog.enabled) {
       return;
     }
-    Debug.Log("test3");
     City1.update();
     EnergyManager.PowerConsumption = City1.PowerConsumption;
     _manager.PowerLeft = _manager.PowerLeft + _manager.PowerConsumption;
@@ -91,7 +89,7 @@ public class MapCreator : MonoBehaviour {
   // Init the map
   private void InitMap() {
     var pseudoRandom = new System.Random(Seed.GetHashCode());
-    City1 = new City(10);
+    City1 = new City(0);
     _map = new Tile[Width, Height];
     _visibleMap = new Boolean[Width, Height];
     for (var x = 0; x < Width; x++) {
@@ -192,7 +190,7 @@ public class MapCreator : MonoBehaviour {
     City1.addBuilding(building);
     EnergyManager.removePower(building.PowerToBuild);
     tileObject.tag = "Untagged";
- 
+
     tileObject.layer = LayerMask.NameToLayer("BuildingTiles");
     tileObject.gameObject.layer = LayerMask.NameToLayer("BuildingTiles");
     tileObject.GetComponent<SpriteRenderer>().color = Color.white;
@@ -202,7 +200,7 @@ public class MapCreator : MonoBehaviour {
     removeFogOfWar(parentTile.X, parentTile.Y, 1, false);
 
     tileObject.name = "Placed " + parentTile.X + "-" + parentTile.Y;
-    
+
     if (building.Type == BuildType.ShieldGenerator) {
       addShield((int) parentTile.X, (int) parentTile.Y, 2);
     }
@@ -296,7 +294,7 @@ public class MapCreator : MonoBehaviour {
           var power = BuildingFactory.createBuilding(BuildType.PowerPlant, ResourceManager);
           _buildingToGameObjects[power] = powerObj;
           _gameObjectToBuilding[powerObj] = power;
-          City1.addBuilding(power);  
+          City1.addBuilding(power);
         }
       }
     }

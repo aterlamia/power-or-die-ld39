@@ -163,6 +163,10 @@ public class MouseHandler : MonoBehaviour {
         building = BuildingFactory.createBuilding(BuildType.Storage, resourcesManager);
         _followTemplate = _mapCreator.getBuildingTemplate(building);
         break;
+      case "btnHouse":
+        building = BuildingFactory.createBuilding(BuildType.House, resourcesManager);
+        _followTemplate = _mapCreator.getBuildingTemplate(building);
+        break;
       case "btnShield":
       default:
         building = BuildingFactory.createBuilding(BuildType.ShieldGenerator, resourcesManager);

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: a36a46cd56bd9400aaf0d565f085bb1d
-timeCreated: 1501308258
+timeCreated: 1501435166
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -9,6 +9,8 @@ TextureImporter:
     21300004: BUttons_2
     21300006: BUttons_3
     21300008: BUttons_4
+    21300010: BUttons_5
+    21300012: BUttons_6
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -172,6 +174,32 @@ TextureImporter:
         serializedVersion: 2
         x: 73
         y: 100
+        width: 63
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: BUttons_5
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 31
+        width: 63
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: BUttons_6
+      rect:
+        serializedVersion: 2
+        x: 73
+        y: 31
         width: 63
         height: 64
       alignment: 0

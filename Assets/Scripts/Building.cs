@@ -20,11 +20,21 @@ public class Building {
     PowerModPerPerson = powerModPerPerson;
   }
 
-  public virtual void Update() {    Debug.Log("test"); }
+  public virtual void Update() {
+    
+  }
 
   public virtual float getPowerAdd() {
     return PowerAdd;
   }
+
+  public virtual float getPowerTake() {
+    return PowerTake;
+  }
+}
+
+class CityBuilding : Building {
+  public CityBuilding(string name, BuildType type, float powerAdd, float powerTake, float powerToBuild, float powerModPerPerson, ResourcesManager resourcesManager) : base(name, type, powerAdd, powerTake, powerToBuild, powerModPerPerson, resourcesManager) { }
 }
 
 class CoalMineBuilding : Building {
@@ -38,7 +48,7 @@ class CoalMineBuilding : Building {
 
   public override void Update() {
     if (Time.time - _timeLastUpdate >= 1) {
-      _resourcesManager.Coal += 0.1f;
+      _resourcesManager.Coal += 0.104f;
       _timeLastUpdate = Time.time;
     }
   }
