@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class MouseHandler : MonoBehaviour {
   public LayerMask LayerIDForTiles;
   public LayerMask LayerIDForUi;
+  
+  public Canvas ScienceCanvas;
+  
   private MapCreator _mapCreator;
   private bool _isDragging = false;
   private Vector3 _lastMousePos;
@@ -102,22 +103,29 @@ public class MouseHandler : MonoBehaviour {
   }
 
   private bool HandleTileClicks() {
-    GameObject tile = getClickedTileObj();
+    GameObject tileobj = getClickedTileObj();
+    Tile tile = _mapCreator.GetTileForGameObject(tileobj);
 
+    if (tile.Building != null) {
+      if (tile.Building.Type == BuildType.ScienceLab) {
+        ScienceCanvas.enabled = true;
+      }
+    }
+  
     // No tile then no click bail out.
-    if (tile == null || _followTemplate == null || tile.CompareTag("fog")) {
+    if (tileobj == null || _followTemplate == null || tileobj.CompareTag("fog")) {
       return false;
     }
 
-    if (IsValidBaseTile(tile)) {
-      _mapCreator.FinalizeTemplate(_followTemplate, tile);
+    if (IsValidBaseTile(tileobj)) {
+      _mapCreator.FinalizeTemplate(_followTemplate, tileobj);
       _followTemplate = null;
     }
     return true;
   }
 
-  private bool IsValidBaseTile(GameObject tileOnj) {
-    Tile tile = _mapCreator.GetTileForGameObject(tileOnj);
+  private bool IsValidBaseTile(GameObject tileObj) {
+    Tile tile = _mapCreator.GetTileForGameObject(tileObj);
 
     if (tile.HasBuilding) {
       return false;
@@ -165,6 +173,10 @@ public class MouseHandler : MonoBehaviour {
         break;
       case "btnHouse":
         building = BuildingFactory.createBuilding(BuildType.House, resourcesManager);
+        _followTemplate = _mapCreator.getBuildingTemplate(building);
+        break;
+      case "btnScience":
+        building = BuildingFactory.createBuilding(BuildType.ScienceLab, resourcesManager);
         _followTemplate = _mapCreator.getBuildingTemplate(building);
         break;
       case "btnShield":

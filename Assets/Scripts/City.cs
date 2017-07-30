@@ -7,6 +7,7 @@ public class City {
   private int _nrOfResidents;
   public float PowerConsumption { get; private set; }
   private int _housesCount = 0;
+  private double _timeLastUpdate;
 
   public City(int nrOfResidents) {
     PowerConsumption = 0f;
@@ -37,9 +38,15 @@ public class City {
       }
       PowerConsumption -= building.PowerTake;
     }  
+    
+    if (Time.time - _timeLastUpdate >= 60 && _nrOfResidents >= 10) {
+      _nrOfResidents += 2;
+      _timeLastUpdate = Time.time;
+    }
   }
 
   public void addBuilding(Building building) {
+    
     _buildings.Add(building);
     if (building.Type == BuildType.House) {
       _housesCount++;

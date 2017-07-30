@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnergyManager : MonoBehaviour {
   private float _powerLeft = 1000;
@@ -14,7 +12,12 @@ public class EnergyManager : MonoBehaviour {
   }
 
   public float PowerConsumption {
-    get { return _powerConsumption; }
+    get {
+      if (_state.Researching) {
+       return  _powerConsumption - _state.ResearchCost;
+      }
+      return _powerConsumption;
+    }
     set { _powerConsumption = value; }
   }
 
@@ -29,6 +32,9 @@ public class EnergyManager : MonoBehaviour {
 
   // Update is called once per frame
   void Update() {
+    if (_state.Researching) {
+      _powerLeft -= _state.ResearchCost;
+    }
     if (_powerLeft <=  0) {
       Debug.Log("you died");
       _state.Lost = true;

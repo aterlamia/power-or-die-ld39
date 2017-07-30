@@ -4,7 +4,16 @@
   public int Y { get; private set; }
 
   private bool hasBuilding = false;
-
+  public Building Building { get; set; }
+  private bool hasCoal = false;
+  private int coalAmount = 0;
+  
+  public Tile(int x, int y, int baseType) {
+    BaseType = baseType;
+    X = x;
+    Y = y;
+  }
+  
   public bool HasCoal {
     get { return hasCoal; }
     set { hasCoal = value; }
@@ -20,13 +29,4 @@
     set { hasBuilding = value; }
   }
 
-  private Building _building;
-  private bool hasCoal = false;
-  private int coalAmount = 0;
-  
-  public Tile(int x, int y, int baseType) {
-    BaseType = baseType;
-    X = x;
-    Y = y;
-  }
 }

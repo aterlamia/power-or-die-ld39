@@ -17,6 +17,9 @@
       case BuildType.House:
         building = new Building("House", BuildType.House, 0f, 0.06f, 150f, 0, resourcesManager);
         break;
+      case BuildType.ScienceLab:
+        building = new Building("Science", BuildType.ScienceLab, 0f, 0.02f, 300f, 0, resourcesManager);
+        break;
       case BuildType.CityCenter:
       default:
         building = new Building("CityHall", BuildType.CityCenter, 0f, 0.02f, 100f, 0.1f, resourcesManager);

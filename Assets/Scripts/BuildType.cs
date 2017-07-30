@@ -5,5 +5,6 @@
   Farm,
   ShieldGenerator,
   House,
-  Storage
+  Storage,
+  ScienceLab
 }

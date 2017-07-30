@@ -12,8 +12,12 @@ public class Gui : MonoBehaviour {
   private GUIStyle _guiStylePositive;
 
   private City _city;
+
+  private State _state;
+
   // Use this for initialization
   void Start() {
+    _state = GameObject.Find("Scene").GetComponent<State>();
     _manager = gameObject.GetComponent<EnergyManager>();
     _resourcesManager = gameObject.GetComponent<MapCreator>().ResourceManager;
     _guiStyleNegative = new GUIStyle {normal = {textColor = Color.red}};
@@ -26,9 +30,9 @@ public class Gui : MonoBehaviour {
   void Update() { }
 
   void OnGUI() {
-    int TextWidth = 100;
+    int TextWidth = 200;
 
-    GUI.Label(new Rect(10, 10, TextWidth, 22), "Power Left :" + ((int) _manager.PowerLeft).ToString());
+    GUI.Label(new Rect(10, 10, TextWidth, 22), "Power Left : " + ((int) _manager.PowerLeft).ToString());
 
     if (_manager.PowerConsumption > 0) {
       GUI.Label(new Rect(10, 30, TextWidth, 22), "Power Gain :" + (Round(_manager.PowerConsumption,2)).ToString(),
@@ -49,6 +53,10 @@ public class Gui : MonoBehaviour {
     }
     
     GUI.Label(new Rect(10, 70, TextWidth, 22), "Colonists :" + (_city.getResidents()).ToString());
+
+    if (_state.Researching) {
+      GUI.Label(new Rect(10, 90, TextWidth, 22), "Research :" + (_state.ResearchCost).ToString());
+    }
   }
   
   public float Round(float value, int digits)
