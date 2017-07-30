@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MEnu : MonoBehaviour {
-	// Update is called once per frame
-	void Update () {
-		var pos = Camera.main.ViewportToWorldPoint(new Vector3(0.1f, 0.90f, 0.005f));
-		pos.z = -5f;
-		transform.position = pos;
+	// Use this for initialization
+	void Start() {
 	}
+
 	
-	
-	void OnGUI() {
-		var pos = Camera.main.ViewportToWorldPoint(new Vector3(0.1f, 0.90f, 0.005f));
-		pos.z = -5f;
-		transform.position = pos;
+	void Update() {
+	//		Debug.Log("Screen Size has changed");
+	//		var pos = Camera.main.ScreenToWorldPoint(new Vector3(1, 1, 0.005f));
+	//		pos.z = 5f;
+	//		transform.position = pos;
 	}
+//	
+//	void OnGUI() {
+//		var pos = Camera.main.ViewportToWorldPoint(new Vector3(2f, 0, 0.005f));
+//		pos.z = 5f;
+//		transform.position = pos;		
+//	}
 }
+			

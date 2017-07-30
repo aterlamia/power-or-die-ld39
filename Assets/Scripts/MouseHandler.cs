@@ -140,7 +140,12 @@ public class MouseHandler : MonoBehaviour {
 
     Building building;
     if (hitInfo.collider.name == "btnPower") {
-      building = new Building("Plant1", BuildType.PowerPlant, 2f, 0f, 100f, 0);
+      Debug.Log("Menu Power.");
+      building = new Building("Plant1", BuildType.PowerPlant, 0.05f, 0f, 200f, 0);
+      _followTemplate = _mapCreator.getBuildingTemplate(building);
+    } else if (hitInfo.collider.name == "btnMine") {
+      building = new Building("Mine1", BuildType.Mine, 0f, 0.04f, 200f, 0);
+      Debug.Log("Menu Mine.");
       _followTemplate = _mapCreator.getBuildingTemplate(building);
     }
     GameObject menu = hitInfo.collider.gameObject;  
@@ -150,4 +155,4 @@ public class MouseHandler : MonoBehaviour {
     }
     return true;
   }
-}
+}  

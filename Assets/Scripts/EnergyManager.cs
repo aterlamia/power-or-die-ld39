@@ -16,13 +16,16 @@ public class EnergyManager : MonoBehaviour {
 		set { _powerConsumption = value; }
 	}
 
+	public void removePower(float powerToRemove) {
+		PowerLeft -= powerToRemove;
+	}
 	// Use this for initialization
 	void Start () {
 		
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () {	
 		
 	}
 	

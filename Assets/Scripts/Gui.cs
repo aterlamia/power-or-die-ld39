@@ -18,8 +18,8 @@ public class Gui : MonoBehaviour {
   }
 
   void OnGUI() {
-    int TextWidth = 45;
+    int TextWidth = 100;
 
-    GUI.Label(new Rect(10, 10, TextWidth, 22), ((int) _manager.PowerLeft).ToString());
+    GUI.Label(new Rect(10, 10, TextWidth, 22), "Power Left :" + ((int) _manager.PowerLeft).ToString());
   }
 }

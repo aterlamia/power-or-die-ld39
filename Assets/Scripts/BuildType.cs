@@ -4,5 +4,6 @@
   CityCenter,
   Farm,
   ShieldGenerator,
-  House
+  House,
+  Storage
 }

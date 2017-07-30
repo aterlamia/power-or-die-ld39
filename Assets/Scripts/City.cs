@@ -19,6 +19,15 @@ public class City {
     _nrOfResidents += count;
   }
 
+  public void update() {
+    PowerConsumption = 0;
+    foreach(Building building in _buildings)
+    {
+      PowerConsumption += building.PowerAdd;
+      PowerConsumption -= building.PowerTake;
+    }
+  }
+
   public void addBuilding(Building building) {
     PowerConsumption += building.PowerAdd;
     PowerConsumption -= building.PowerTake;
