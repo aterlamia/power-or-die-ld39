@@ -15,17 +15,19 @@ public class ScienceDIalog : MonoBehaviour {
 		_state = GameObject.Find("Scene").GetComponent<State>();
 
 		Button btn = Btn1.GetComponent<Button>();
-		btn.onClick.AddListener(StartS1);
+		btn.onClick.AddListener(CloseWin);
 
 		Button btn2 = Btn2.GetComponent<Button>();
 		btn2.onClick.AddListener(StartS2);
 	}
 
+	private void CloseWin() {
+  	CanvasObject.enabled = false;
+	}
+
 	void StartS2() {
 		_state.StartResearch2();
 
-		CanvasObject.enabled = false;
-		CanvasObject.enabled = false;
 		CanvasObject.enabled = false;
 		Btn2.GetComponent<Button>().interactable = false;
 	}		

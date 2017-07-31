@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 
@@ -29,9 +30,11 @@ public class Dialog : MonoBehaviour {
       CanvasObject.enabled = true;
       DialogText.text = "NOOOOOOOOOO!!!! your incompetence killed us all";
       YourButton.GetComponentInChildren<Text>().text = "Game over";
+      Button btn = YourButton.GetComponent<Button>();
+      btn.onClick.AddListener(Restart);
+     
     }
 
-    Debug.Log(_state.Research2Done);
     if (_state.Research2Done) {
       CanvasObject.enabled = true;
       DialogText.text = "YAAAY!!!! Unlimited power we made it, Well done";
@@ -54,6 +57,11 @@ public class Dialog : MonoBehaviour {
     }
   }
 
+  void Restart() {
+    YourButton.GetComponentInChildren<Text>().text = "Restarting ...";
+    SceneManager.LoadScene("Map");
+  }
+  
   void Start() {
     _state = GameObject.Find("Scene").GetComponent<State>();
 
@@ -95,7 +103,7 @@ public class Dialog : MonoBehaviour {
     
     _dialogs[18] = "Great we are stable again, and since we still have room for a new PowerPlant";
     _dialogs[19] = "If you manage the power good it might be a good idea to build a ScienceStation \n\n With the science station we can Research better or cleaner energy sources.";
-    _dialogs[20] = "Science stations will have an energy upkeep like all buildings, however research needs energy to so think carefully before you research something";
+    _dialogs[20] = "Science stations will have an energy upkeep like all buildings, however research needs energy to so think carefully before you research something\n\n Click on a science station to open its research  ";
     _dialogs[21] = "blank";
     
     

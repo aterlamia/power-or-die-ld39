@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class EnergyManager : MonoBehaviour {
-  private float _powerLeft = 1000;
+  private float _powerLeft = 1500;
   private float _powerConsumption = -0.01f;
 
   private State _state;
