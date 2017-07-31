@@ -39,7 +39,7 @@ public class City {
       PowerConsumption -= building.PowerTake;
     }  
     
-    if (Time.time - _timeLastUpdate >= 60 && _nrOfResidents >= 10) {
+    if (Time.time - _timeLastUpdate >= 120 && _nrOfResidents >= 10) {
       _nrOfResidents += 2;
       _timeLastUpdate = Time.time;
     }
