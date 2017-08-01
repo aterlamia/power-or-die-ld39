@@ -4,9 +4,9 @@ using Debug = UnityEngine.Debug;
 public class MouseHandler : MonoBehaviour {
   public LayerMask LayerIDForTiles;
   public LayerMask LayerIDForUi;
-  
+
   public Canvas ScienceCanvas;
-  
+
   private MapCreator _mapCreator;
   private bool _isDragging = false;
   private Vector3 _lastMousePos;
@@ -111,7 +111,7 @@ public class MouseHandler : MonoBehaviour {
         ScienceCanvas.enabled = true;
       }
     }
-  
+
     // No tile then no click bail out.
     if (tileobj == null || _followTemplate == null || tileobj.CompareTag("fog")) {
       return false;
@@ -198,9 +198,20 @@ public class MouseHandler : MonoBehaviour {
       foreach (SpriteRenderer spriteRenderer in renderers) {
         spriteRenderer.enabled = true;
       }
-      BoxCollider2D[] colliders = menu.GetComponentInChildren<Transform>().GetComponentsInChildren<BoxCollider2D>();
-      foreach (BoxCollider2D collider in colliders) {
-        collider.enabled = true;
+      Transform[] buttons = menu.GetComponentsInChildren<Transform>();
+
+      foreach (Transform button in buttons) {
+        if (button.name != "btnSciene" && button.name != "btnPower" && button.name != "btnMine" &&
+            button.name != "btnHouse") {
+          continue;
+        }
+        if (button.CompareTag("disabled")) {
+          Debug.Log(1);
+          continue;
+        } else {
+          BoxCollider2D collider = button.GetComponentInChildren<BoxCollider2D>();
+          collider.enabled = true;
+        }
       }
       return true;
     }

@@ -32,14 +32,4 @@ public class ScienceDIalog : MonoBehaviour {
 		Btn2.GetComponent<Button>().interactable = false;
 	}		
 
-	void StartS1() {
-		_state.StartResearch1();
-		CanvasObject.enabled = false;	
-		Btn1.GetComponent<Button>().interactable = false;
-	}
-
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
